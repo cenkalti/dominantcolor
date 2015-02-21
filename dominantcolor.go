@@ -117,5 +117,5 @@ func Find(img image.Image) color.RGBA {
 }
 
 func Hex(c color.RGBA) string {
-	return "#" + fmt.Sprintf("%.2x%.2x%.2x", c.R, c.G, c.B)
+	return "#" + fmt.Sprintf("%.2X%.2X%.2X", c.R, c.G, c.B)
 }

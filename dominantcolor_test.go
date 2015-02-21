@@ -1,34 +1,45 @@
-package dominantcolor
+package dominantcolor_test
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	_ "image/png"
-	"log"
 	"math"
 	"os"
 	"testing"
+
+	"github.com/cenkalti/dominantcolor"
 )
 
 // https://www.mozilla.org/en-US/styleguide/identity/firefox/color/
 var firefoxOrange = color.RGBA{R: 230, G: 96}
 
+func Example() {
+	f, _ := os.Open("firefox.png")
+	img, _, _ := image.Decode(f)
+	f.Close()
+	fmt.Println(dominantcolor.Hex(dominantcolor.Find(img)))
+	// Output: #CA5527
+}
+
 func TestFind(t *testing.T) {
 	f, err := os.Open("firefox.png")
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 	img, _, err := image.Decode(f)
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 	f.Close()
-	c := Find(img)
+	c := dominantcolor.Find(img)
 	d := distance(c, firefoxOrange)
-	if d > 55 {
-		t.Errorf("Found color is not close. Distance: %f", d)
-		t.Log("Found dominant color:", Hex(c))
-		t.Log("Firefox orange:      ", Hex(firefoxOrange))
+	t.Log("Found dominant color:", dominantcolor.Hex(c))
+	t.Log("Firefox orange:      ", dominantcolor.Hex(firefoxOrange))
+	t.Logf("Distance:             %.2f", d)
+	if d > 50 {
+		t.Errorf("Found color is not close.")
 	}
 }
 
