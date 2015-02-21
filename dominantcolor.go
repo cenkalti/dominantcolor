@@ -7,6 +7,10 @@
 // image. This uses a KMean clustering algorithm to find clusters of pixel
 // colors in RGB space.
 //
+// The algorithm is ported from Chromium source code:
+//     https://src.chromium.org/svn/trunk/src/ui/gfx/color_analysis.h
+//     https://src.chromium.org/svn/trunk/src/ui/gfx/color_analysis.cc
+//
 // RGB KMean Algorithm (N clusters, M iterations):
 //
 // 1. Pick N starting colors by randomly sampling the pixels. If you see a
