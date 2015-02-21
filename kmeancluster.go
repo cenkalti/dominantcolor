@@ -65,9 +65,9 @@ func (k *kMeanCluster) AddPoint(r uint8, g uint8, b uint8) {
 // Just returns the distance^2. Since we are comparing relative distances
 // there is no need to perform the expensive sqrt() operation.
 func (k *kMeanCluster) GetDistanceSqr(r uint8, g uint8, b uint8) uint32 {
-	return uint32((r-k.centroid[0])*(r-k.centroid[0]) +
-		(g-k.centroid[1])*(g-k.centroid[1]) +
-		(b-k.centroid[2])*(b-k.centroid[2]))
+	return (uint32(r)-uint32(k.centroid[0]))*(uint32(r)-uint32(k.centroid[0])) +
+		(uint32(g)-uint32(k.centroid[1]))*(uint32(g)-uint32(k.centroid[1])) +
+		(uint32(b)-uint32(k.centroid[2]))*(uint32(b)-uint32(k.centroid[2]))
 }
 
 // In order to determine if we have hit convergence or not we need to see
@@ -78,7 +78,6 @@ func (k *kMeanCluster) CompareCentroidWithAggregate() bool {
 	if k.counter == 0 {
 		return false
 	}
-
 	return uint8(k.aggregate[0]/uint32(k.counter)) == k.centroid[0] &&
 		uint8(k.aggregate[1]/uint32(k.counter)) == k.centroid[1] &&
 		uint8(k.aggregate[2]/uint32(k.counter)) == k.centroid[2]
