@@ -4,9 +4,7 @@
 
 package dominantcolor
 
-import (
-	"math"
-)
+import "math"
 
 type kMeanCluster struct {
 	centroid [3]uint8
@@ -27,10 +25,8 @@ func (k *kMeanCluster) SetCentroid(r uint8, g uint8, b uint8) {
 	k.centroid[2] = b
 }
 
-func (k *kMeanCluster) GetCentroid(r *uint8, g *uint8, b *uint8) {
-	*r = k.centroid[0]
-	*g = k.centroid[1]
-	*b = k.centroid[2]
+func (k *kMeanCluster) Centroid() (r, g, b uint8) {
+	return k.centroid[0], k.centroid[1], k.centroid[2]
 }
 
 func (k *kMeanCluster) IsAtCentroid(r uint8, g uint8, b uint8) bool {
@@ -65,9 +61,10 @@ func (k *kMeanCluster) AddPoint(r uint8, g uint8, b uint8) {
 // Just returns the distance^2. Since we are comparing relative distances
 // there is no need to perform the expensive sqrt() operation.
 func (k *kMeanCluster) GetDistanceSqr(r uint8, g uint8, b uint8) uint32 {
-	return (uint32(r)-uint32(k.centroid[0]))*(uint32(r)-uint32(k.centroid[0])) +
-		(uint32(g)-uint32(k.centroid[1]))*(uint32(g)-uint32(k.centroid[1])) +
-		(uint32(b)-uint32(k.centroid[2]))*(uint32(b)-uint32(k.centroid[2]))
+	dr := uint32(r) - uint32(k.centroid[0])
+	dg := uint32(g) - uint32(k.centroid[1])
+	db := uint32(b) - uint32(k.centroid[2])
+	return dr*dr + dg*dg + db*db
 }
 
 // In order to determine if we have hit convergence or not we need to see
@@ -83,9 +80,9 @@ func (k *kMeanCluster) CompareCentroidWithAggregate() bool {
 		uint8(k.aggregate[2]/uint32(k.counter)) == k.centroid[2]
 }
 
-type kMeanClusters []*kMeanCluster
+type kMeanClusterGroup []*kMeanCluster
 
-func (a kMeanClusters) ContainsCentroid(r, g, b uint8) bool {
+func (a kMeanClusterGroup) ContainsCentroid(r, g, b uint8) bool {
 	for _, c := range a {
 		if c.IsAtCentroid(r, g, b) {
 			return true
@@ -94,7 +91,7 @@ func (a kMeanClusters) ContainsCentroid(r, g, b uint8) bool {
 	return false
 }
 
-func (a kMeanClusters) Closest(r, g, b uint8) *kMeanCluster {
+func (a kMeanClusterGroup) Closest(r, g, b uint8) *kMeanCluster {
 	var closest *kMeanCluster
 	var distanceToClosest uint32 = math.MaxUint32
 	for _, c := range a {
@@ -107,7 +104,7 @@ func (a kMeanClusters) Closest(r, g, b uint8) *kMeanCluster {
 	return closest
 }
 
-type byWeight kMeanClusters
+type byWeight kMeanClusterGroup
 
 func (a byWeight) Len() int           { return len(a) }
 func (a byWeight) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
