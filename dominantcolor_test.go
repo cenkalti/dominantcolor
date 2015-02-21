@@ -49,3 +49,18 @@ func distance(a, b color.RGBA) float64 {
 	db := uint32(a.B) - uint32(b.B)
 	return math.Sqrt(float64(dr*dr + dg*dg + db*db))
 }
+
+func BenchmarkFind(b *testing.B) {
+	f, err := os.Open("firefox.png")
+	if err != nil {
+		b.Fatal(err)
+	}
+	img, _, err := image.Decode(f)
+	if err != nil {
+		b.Fatal(err)
+	}
+	f.Close()
+	for i := 0; i < b.N; i++ {
+		dominantcolor.Find(img)
+	}
+}
