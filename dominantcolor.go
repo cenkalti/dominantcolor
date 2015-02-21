@@ -2,6 +2,36 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Package dominantcolor provides a function for finding
+// a color that represents the calculated dominant color in the
+// image. This uses a KMean clustering algorithm to find clusters of pixel
+// colors in RGB space.
+//
+// RGB KMean Algorithm (N clusters, M iterations):
+// 1.Pick N starting colors by randomly sampling the pixels. If you see a
+//   color you already saw keep sampling. After a certain number of tries
+//   just remove the cluster and continue with N = N-1 clusters (for an image
+//   with just one color this should devolve to N=1). These colors are the
+//   centers of your N clusters.
+// 2.For each pixel in the image find the cluster that it is closest to in RGB
+//   space. Add that pixel's color to that cluster (we keep a sum and a count
+//   of all of the pixels added to the space, so just add it to the sum and
+//   increment count).
+// 3.Calculate the new cluster centroids by getting the average color of all of
+//   the pixels in each cluster (dividing the sum by the count).
+// 4.See if the new centroids are the same as the old centroids.
+//     a) If this is the case for all N clusters than we have converged and
+//        can move on.
+//     b) If any centroid moved, repeat step 2 with the new centroids for up
+//        to M iterations.
+// 5.Once the clusters have converged or M iterations have been tried, sort
+//   the clusters by weight (where weight is the number of pixels that make up
+//   this cluster).
+// 6.Going through the sorted list of clusters, pick the first cluster with the
+//   largest weight that's centroid falls between |lower_bound| and
+//   |upper_bound|. Return that color.
+//   If no color fulfills that requirement return the color with the largest
+//   weight regardless of whether or not it fulfills the equation above.
 package dominantcolor
 
 import (
@@ -116,6 +146,7 @@ func Find(img image.Image) color.RGBA {
 	return col
 }
 
+// Hex returns a string representing the color in "#AABBCC" format.
 func Hex(c color.RGBA) string {
 	return "#" + fmt.Sprintf("%.2X%.2X%.2X", c.R, c.G, c.B)
 }
