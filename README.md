@@ -21,10 +21,36 @@ See more at: http://godoc.org/github.com/cenkalti/dominantcolor
 ####Example
 
 ```
-f, _ := os.Open("firefox.png")
-img, _, _ := image.Decode(f)
-f.Close()
-fmt.Println(dominantcolor.Hex(dominantcolor.Find(img)))
+package main
+
+import (
+	"fmt"
+	"github.com/cenkalti/dominantcolor"
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
+	"os"
+)
+
+func FindDomiantColor(fileInput string) (string, error) {
+	f, err := os.Open(fileInput)
+	defer f.Close()
+	if err != nil {
+		fmt.Println("File not found:", fileInput)
+		return "", err
+	}
+	img, _, err := image.Decode(f)
+	if err != nil {
+		return "", err
+	}
+
+	return dominantcolor.Hex(dominantcolor.Find(img)), nil
+}
+
+func main() {
+	fmt.Println(FindDomiantColor("aa.png"))
+}
+
 ```
 
 ####Output:
