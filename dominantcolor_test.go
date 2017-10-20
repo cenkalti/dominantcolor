@@ -20,7 +20,7 @@ func Example() {
 	img, _, _ := image.Decode(f)
 	f.Close()
 	fmt.Println(dominantcolor.Hex(dominantcolor.Find(img)))
-	// Output: #CA5527
+	// Output: #CB5A27
 }
 
 func TestFind(t *testing.T) {
