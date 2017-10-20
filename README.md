@@ -5,7 +5,7 @@ Dominantcolor
 
 Find dominant color in images
 
-```
+``` go
 import "github.com/cenkalti/dominantcolor"
 ```
 
@@ -18,9 +18,9 @@ https://src.chromium.org/svn/trunk/src/ui/gfx/color_analysis.cc
 
 See more at: http://godoc.org/github.com/cenkalti/dominantcolor
 
-####Example
+#### Example
 
-```
+``` go
 package main
 
 import (
@@ -53,7 +53,7 @@ func main() {
 
 ```
 
-####Output:
+#### Output:
 ```
 #CA5527
 ```
