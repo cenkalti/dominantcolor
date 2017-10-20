@@ -88,7 +88,7 @@ func Find(img image.Image) color.RGBA {
 			if a == 0 {
 				continue
 			}
-			r, g, b := uint8(ri/255), uint8(gi/255), uint8(bi/255)
+			r, g, b := uint8(ri/0x101), uint8(gi/0x101), uint8(bi/0x101)
 			// Check to see if we have seen this color before.
 			colorUnique = !clusters.ContainsCentroid(r, g, b)
 			// If we have a unique color set the center of the cluster to
@@ -113,7 +113,7 @@ func Find(img image.Image) color.RGBA {
 				if a == 0 {
 					continue
 				}
-				r, g, b := uint8(ri/255), uint8(gi/255), uint8(bi/255)
+				r, g, b := uint8(ri/0x101), uint8(gi/0x101), uint8(bi/0x101)
 				// Figure out which cluster this color is closest to in RGB space.
 				closest := clusters.Closest(r, g, b)
 				closest.AddPoint(r, g, b)
