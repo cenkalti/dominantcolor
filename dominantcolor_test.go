@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/png"
 	_ "image/png"
 	"math"
 	"os"
@@ -23,7 +24,7 @@ func Example() {
 	// Output: #CB5A27
 }
 
-func TestFind(t *testing.T) {
+func testImage(t *testing.T) image.Image {
 	f, err := os.Open("firefox.png")
 	if err != nil {
 		t.Fatal(err)
@@ -33,6 +34,11 @@ func TestFind(t *testing.T) {
 		t.Fatal(err)
 	}
 	f.Close()
+	return img
+}
+
+func TestFind(t *testing.T) {
+	img := testImage(t)
 	c := dominantcolor.Find(img)
 	d := distance(c, firefoxOrange)
 	t.Log("Found dominant color:", dominantcolor.Hex(c))
@@ -40,6 +46,26 @@ func TestFind(t *testing.T) {
 	t.Logf("Distance:             %.2f", d)
 	if d > 50 {
 		t.Errorf("Found color is not close.")
+	}
+}
+
+func TestFindN(t *testing.T) {
+	img := testImage(t)
+	colors := dominantcolor.FindN(img, 4)
+
+	if len(colors) != 4 {
+		t.Error("Did not find 4 colors. Got:", len(colors))
+	}
+
+	for i, c := range colors {
+		t.Logf("%d/%d Found dominant color: %s", i, len(colors), dominantcolor.Hex(c))
+
+		paletted := image.NewPaletted(image.Rect(0, 0, 64, 64), []color.Color{c})
+		f, err := os.OpenFile(fmt.Sprintf("_test_palette_%d.png", i), os.O_CREATE|os.O_RDWR, os.ModePerm)
+		if err != nil {
+			t.Fatal(err)
+		}
+		png.Encode(f, paletted)
 	}
 }
 
