@@ -56,15 +56,17 @@ import (
 
 const (
 	resizeTo      = 256
-	nCluster      = 4
 	maxSample     = 10
 	nIterations   = 50
 	maxBrightness = 665
 	minDarkness   = 100
 )
 
-// Find returns the dominant color in img.
-func Find(img image.Image) color.RGBA {
+var (
+	nCluster      = 4
+)
+
+func findClusters(img image.Image) kMeanClusterGroup {
 	// Shrink image for faster processing.
 	img = resize.Thumbnail(resizeTo, resizeTo, img, resize.NearestNeighbor)
 
@@ -129,6 +131,13 @@ func Find(img image.Image) color.RGBA {
 	// Sort the clusters by population so we can tell what the most popular
 	// color is.
 	sort.Sort(byWeight(clusters))
+	return clusters
+}
+
+// Find returns the dominant color in img.
+func Find(img image.Image) color.RGBA {
+	clusters := findClusters(img)
+
 	// Loop through the clusters to figure out which cluster has an appropriate
 	// color. Skip any that are too bright/dark and go in order of weight.
 	var col color.RGBA
@@ -155,6 +164,31 @@ func Find(img image.Image) color.RGBA {
 		}
 	}
 	return col
+}
+
+// FindN returns the first-N dominant colors in an image.
+// If nClusters is less than or equal to 0, the value defaults to 4.
+// Clusters are returned in their order of dominance.
+func FindN(img image.Image, nClusters int) []color.RGBA {
+	if nClusters > 0 {
+		nCluster = nClusters
+	}
+	clusters := findClusters(img)
+
+	cols := []color.RGBA{}
+	for _, c := range clusters {
+		var col color.RGBA
+
+		r, g, b := c.Centroid()
+
+		col.R = r
+		col.G = g
+		col.B = b
+		col.A = 0xff
+
+		cols = append(cols, col)
+	}
+	return cols
 }
 
 // Hex returns a string representing the color in "#AABBCC" format.
