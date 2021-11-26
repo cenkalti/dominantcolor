@@ -13,8 +13,8 @@ Package dominantcolor provides a function for finding a color that represents th
 
 The algorithm is ported from Chromium source code:
 
-https://src.chromium.org/svn/trunk/src/ui/gfx/color_analysis.h
-https://src.chromium.org/svn/trunk/src/ui/gfx/color_analysis.cc
+- https://github.com/adobe/chromium/blob/master/ui/gfx/color_analysis.h
+- https://github.com/adobe/chromium/blob/master/ui/gfx/color_analysis.cc
 
 See more at: http://godoc.org/github.com/cenkalti/dominantcolor
 
