@@ -57,3 +57,7 @@ func main() {
 ```
 #CA5527
 ```
+
+---
+
+Thanks to [@stuartmscott](https://github.com/stuartmscott) for creating a GUI: https://github.com/stuartmscott/dominantcolor
