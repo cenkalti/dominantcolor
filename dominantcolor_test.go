@@ -65,7 +65,7 @@ func TestFindN(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		png.Encode(f, paletted)
+		_ = png.Encode(f, paletted)
 	}
 }
 
