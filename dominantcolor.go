@@ -134,34 +134,22 @@ func findClusters(img image.Image, nCluster int) kMeanClusterGroup {
 
 // Find returns the dominant color in img.
 func Find(img image.Image) color.RGBA {
-	clusters := findClusters(img, nClustersDefault)
+	colors := FindN(img, nClustersDefault)
 
 	// Loop through the clusters to figure out which cluster has an appropriate
 	// color. Skip any that are too bright/dark and go in order of weight.
-	var col color.RGBA
-	for i, c := range clusters {
-		r, g, b := c.Centroid()
+	for _, c := range colors {
 		// Sum the RGB components to determine if the color is too bright or too dark.
-		var summedColor uint16 = uint16(r) + uint16(g) + uint16(b)
+		summedColor := uint16(c.R) + uint16(c.G) + uint16(c.B)
 
 		if summedColor < maxBrightness && summedColor > minDarkness {
 			// If we found a valid color just set it and break. We don't want to
 			// check the other ones.
-			col.R = r
-			col.G = g
-			col.B = b
-			col.A = 0xFF
-			break
-		} else if i == 0 {
-			// We haven't found a valid color, but we are at the first color so
-			// set the color anyway to make sure we at least have a value here.
-			col.R = r
-			col.G = g
-			col.B = b
-			col.A = 0xFF
+			return c
 		}
 	}
-	return col
+	// We haven't found a valid color, return the first one.
+	return colors[0]
 }
 
 // FindN returns the first-N dominant colors in an image.
