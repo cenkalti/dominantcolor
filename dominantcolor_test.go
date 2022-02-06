@@ -49,19 +49,20 @@ func TestFind(t *testing.T) {
 	}
 }
 
-func TestFindN(t *testing.T) {
+func TestFindWeight(t *testing.T) {
 	img := testImage(t)
-	colors := dominantcolor.FindN(img, 4)
+	colors := dominantcolor.FindWeight(img, 4)
 
 	if len(colors) != 4 {
 		t.Error("Did not find 4 colors. Got:", len(colors))
 	}
 
-	for i, c := range colors {
-		t.Logf("%d/%d Found dominant color: %s", i, len(colors), dominantcolor.Hex(c))
+	for i, col := range colors {
+		c := col.RGBA
+		t.Logf("%d/%d Found dominant color: %s, weight: %.2f", i+1, len(colors), dominantcolor.Hex(c), col.Weight)
 
 		paletted := image.NewPaletted(image.Rect(0, 0, 64, 64), []color.Color{c})
-		f, err := os.OpenFile(fmt.Sprintf("_test_palette_%d.png", i), os.O_CREATE|os.O_RDWR, os.ModePerm)
+		f, err := os.OpenFile(fmt.Sprintf("_test_palette_%d.png", i+1), os.O_CREATE|os.O_RDWR, os.ModePerm)
 		if err != nil {
 			t.Fatal(err)
 		}

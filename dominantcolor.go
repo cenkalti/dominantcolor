@@ -64,7 +64,12 @@ const (
 	nClustersDefault = 4
 )
 
-func findClusters(img image.Image, nCluster int) kMeanClusterGroup {
+type Color struct {
+	color.RGBA
+	Weight float64
+}
+
+func findClusters(img image.Image, nCluster int) (kMeanClusterGroup, float64) {
 	// Shrink image for faster processing.
 	img = resize.Thumbnail(resizeTo, resizeTo, img, resize.NearestNeighbor)
 
@@ -129,7 +134,7 @@ func findClusters(img image.Image, nCluster int) kMeanClusterGroup {
 	// Sort the clusters by population so we can tell what the most popular
 	// color is.
 	sort.Sort(byWeight(clusters))
-	return clusters
+	return clusters, float64(width) * float64(height)
 }
 
 // Find returns the dominant color in img.
@@ -156,25 +161,30 @@ func Find(img image.Image) color.RGBA {
 // If nClusters is less than or equal to 0, the value defaults to 4.
 // Clusters are returned in their order of dominance.
 func FindN(img image.Image, nClusters int) []color.RGBA {
+	colors := FindWeight(img, nClusters)
+	cols := []color.RGBA{}
+	for _, c := range colors {
+		cols = append(cols, c.RGBA)
+	}
+	return cols
+}
+
+func FindWeight(img image.Image, nClusters int) []Color {
 	if nClusters <= 0 {
 		nClusters = nClustersDefault
 	}
-	clusters := findClusters(img, nClusters)
 
-	cols := []color.RGBA{}
+	clusters, totalWeight := findClusters(img, nClusters)
+
+	colors := []Color{}
 	for _, c := range clusters {
-		var col color.RGBA
-
 		r, g, b := c.Centroid()
-
-		col.R = r
-		col.G = g
-		col.B = b
-		col.A = 0xff
-
-		cols = append(cols, col)
+		colors = append(colors, Color{
+			RGBA:   color.RGBA{R: r, G: g, B: b, A: 0xff},
+			Weight: float64(c.weight) / totalWeight,
+		})
 	}
-	return cols
+	return colors
 }
 
 // Hex returns a string representing the color in "#AABBCC" format.
