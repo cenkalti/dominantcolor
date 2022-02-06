@@ -60,13 +60,11 @@ const (
 	nIterations   = 50
 	maxBrightness = 665
 	minDarkness   = 100
+
+	nClustersDefault = 4
 )
 
-var (
-	nCluster      = 4
-)
-
-func findClusters(img image.Image) kMeanClusterGroup {
+func findClusters(img image.Image, nCluster int) kMeanClusterGroup {
 	// Shrink image for faster processing.
 	img = resize.Thumbnail(resizeTo, resizeTo, img, resize.NearestNeighbor)
 
@@ -136,7 +134,7 @@ func findClusters(img image.Image) kMeanClusterGroup {
 
 // Find returns the dominant color in img.
 func Find(img image.Image) color.RGBA {
-	clusters := findClusters(img)
+	clusters := findClusters(img, nClustersDefault)
 
 	// Loop through the clusters to figure out which cluster has an appropriate
 	// color. Skip any that are too bright/dark and go in order of weight.
@@ -170,10 +168,10 @@ func Find(img image.Image) color.RGBA {
 // If nClusters is less than or equal to 0, the value defaults to 4.
 // Clusters are returned in their order of dominance.
 func FindN(img image.Image, nClusters int) []color.RGBA {
-	if nClusters > 0 {
-		nCluster = nClusters
+	if nClusters <= 0 {
+		nClusters = nClustersDefault
 	}
-	clusters := findClusters(img)
+	clusters := findClusters(img, nClusters)
 
 	cols := []color.RGBA{}
 	for _, c := range clusters {
