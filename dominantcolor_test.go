@@ -59,7 +59,7 @@ func TestFindWeight(t *testing.T) {
 
 	for i, col := range colors {
 		c := col.RGBA
-		t.Logf("%d/%d Found dominant color: %s, weight: %.2f", i+1, len(colors), dominantcolor.Hex(c), col.Weight)
+		t.Logf("%d/%d Found dominant color: %s, weight: %.2f", i+1, len(colors), dominantcolor.Hex(&c), col.Weight)
 
 		paletted := image.NewPaletted(image.Rect(0, 0, 64, 64), []color.Color{c})
 		f, err := os.OpenFile(fmt.Sprintf("_test_palette_%d.png", i+1), os.O_CREATE|os.O_RDWR, os.ModePerm)
