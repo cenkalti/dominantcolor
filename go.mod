@@ -1,4 +1,4 @@
-module github.com/cenkalti/dominantcolor
+module github.com/cellularhacker/dominantcolor
 
 go 1.16
 

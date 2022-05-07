@@ -33,7 +33,7 @@ func (k *kMeanCluster) IsAtCentroid(r uint8, g uint8, b uint8) bool {
 	return r == k.centroid[0] && g == k.centroid[1] && b == k.centroid[2]
 }
 
-// Recomputes the centroid of the cluster based on the aggregate data. The
+// RecomputeCentroid Recomputes the centroid of the cluster based on the aggregate data. The
 // number of points used to calculate this center is stored for weighting
 // purposes. The aggregate and counter are then cleared to be ready for the
 // next iteration.
@@ -58,7 +58,7 @@ func (k *kMeanCluster) AddPoint(r uint8, g uint8, b uint8) {
 	k.counter++
 }
 
-// Just returns the distance^2. Since we are comparing relative distances
+// GetDistanceSqr Just returns the distance^2. Since we are comparing relative distances
 // there is no need to perform the expensive sqrt() operation.
 func (k *kMeanCluster) GetDistanceSqr(r uint8, g uint8, b uint8) uint32 {
 	dr := uint32(r) - uint32(k.centroid[0])
@@ -67,7 +67,7 @@ func (k *kMeanCluster) GetDistanceSqr(r uint8, g uint8, b uint8) uint32 {
 	return dr*dr + dg*dg + db*db
 }
 
-// In order to determine if we have hit convergence or not we need to see
+// CompareCentroidWithAggregate In order to determine if we have hit convergence or not we need to see
 // if the centroid of the cluster has moved. This determines whether or
 // not the centroid is the same as the aggregate sum of points that will be
 // used to generate the next centroid.

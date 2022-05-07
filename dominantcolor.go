@@ -138,7 +138,7 @@ func findClusters(img image.Image, nCluster int) (kMeanClusterGroup, float64) {
 }
 
 // Find returns the dominant color in img.
-func Find(img image.Image) color.RGBA {
+func Find(img image.Image) *color.RGBA {
 	colors := FindN(img, nClustersDefault)
 
 	// Loop through the clusters to figure out which cluster has an appropriate
@@ -150,11 +150,16 @@ func Find(img image.Image) color.RGBA {
 		if summedColor < maxBrightness && summedColor > minDarkness {
 			// If we found a valid color just set it and break. We don't want to
 			// check the other ones.
-			return c
+			return &c
 		}
 	}
 	// We haven't found a valid color, return the first one.
-	return colors[0]
+	if len(colors) > 0 {
+		return &colors[0]
+	}
+
+	// MARK: If we didn't find any colors, just return empty color.RGBA
+	return nil
 }
 
 // FindN returns the first-N dominant colors in an image.
@@ -162,7 +167,7 @@ func Find(img image.Image) color.RGBA {
 // Clusters are returned in their order of dominance.
 func FindN(img image.Image, nClusters int) []color.RGBA {
 	colors := FindWeight(img, nClusters)
-	cols := []color.RGBA{}
+	cols := make([]color.RGBA, 0)
 	for _, c := range colors {
 		cols = append(cols, c.RGBA)
 	}
@@ -176,7 +181,7 @@ func FindWeight(img image.Image, nClusters int) []Color {
 
 	clusters, totalWeight := findClusters(img, nClusters)
 
-	colors := []Color{}
+	colors := make([]Color, 0)
 	for _, c := range clusters {
 		r, g, b := c.Centroid()
 		colors = append(colors, Color{
