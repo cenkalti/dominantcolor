@@ -10,7 +10,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cenkalti/dominantcolor"
+	"github.com/cellularhacker/dominantcolor"
 )
 
 // https://www.mozilla.org/en-US/styleguide/identity/firefox/color/

@@ -193,6 +193,9 @@ func FindWeight(img image.Image, nClusters int) []Color {
 }
 
 // Hex returns a string representing the color in "#AABBCC" format.
-func Hex(c color.RGBA) string {
+func Hex(c *color.RGBA) string {
+	if c == nil {
+		return ""
+	}
 	return "#" + fmt.Sprintf("%.2X%.2X%.2X", c.R, c.G, c.B)
 }
