@@ -141,7 +141,9 @@ func findClusters(img image.Image, nCluster int) (kMeanClusterGroup, float64) {
 // Find returns the dominant color in img.
 func Find(img image.Image) color.RGBA {
 	colors := FindN(img, nClustersDefault)
-
+	if len(colors) == 0 {
+		return color.RGBA{0, 0, 0, 0}
+	}
 	// Loop through the clusters to figure out which cluster has an appropriate
 	// color. Skip any that are too bright/dark and go in order of weight.
 	for _, c := range colors {
