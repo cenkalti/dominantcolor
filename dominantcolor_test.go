@@ -16,6 +16,8 @@ import (
 // https://www.mozilla.org/en-US/styleguide/identity/firefox/color/
 var firefoxOrange = color.RGBA{R: 230, G: 96}
 
+var firefoxLargeDominant = color.RGBA{R: 243, G: 53, B: 75}
+
 func Example() {
 	f, _ := os.Open("firefox.png")
 	img, _, _ := image.Decode(f)
@@ -25,7 +27,20 @@ func Example() {
 }
 
 func testImage(t *testing.T) image.Image {
-	f, err := os.Open("firefox.png")
+	return loadTestImage(t, false)
+}
+
+func largeTestImage(t *testing.T) image.Image {
+	return loadTestImage(t, true)
+}
+
+func loadTestImage(t *testing.T, large bool) image.Image {
+	t.Helper()
+	name := "firefox.png"
+	if large {
+		name = "firefox-large.png"
+	}
+	f, err := os.Open(name)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,6 +58,18 @@ func TestFind(t *testing.T) {
 	d := distance(c, firefoxOrange)
 	t.Log("Found dominant color:", dominantcolor.Hex(c))
 	t.Log("Firefox orange:      ", dominantcolor.Hex(firefoxOrange))
+	t.Logf("Distance:             %.2f", d)
+	if d > 50 {
+		t.Errorf("Found color is not close.")
+	}
+}
+
+func TestFind_Large(t *testing.T) {
+	img := largeTestImage(t)
+	c := dominantcolor.Find(img)
+	d := distance(c, firefoxLargeDominant)
+	t.Log("Found dominant color:", dominantcolor.Hex(c))
+	t.Log("Firefox large orange:", dominantcolor.Hex(firefoxLargeDominant))
 	t.Logf("Distance:             %.2f", d)
 	if d > 50 {
 		t.Errorf("Found color is not close.")
